@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="S:\Houdini\VirtualProductionStudioTool\StudioTool\Intermediate\PipInstall"
+VIRTUAL_ENV="D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioTool\Intermediate\PipInstall"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

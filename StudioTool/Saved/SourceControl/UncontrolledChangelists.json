@@ -5,6 +5,13 @@
 			"guid": "00000000000000000000000000000000",
 			"description": "Default Uncontrolled Changelist",
 			"files": [
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/Main.umap",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/HDAs/MorganSkilly_nDisplayMeshCreator_1_0.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F_BP.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/HoudiniEngine/Temp/MorganSkilly_nDisplayMeshCreator_1_0/8BD4DB4F/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/WatersEdge/Carbon5_MatSky.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioTool/Content/WatersEdge/cldrs_Mat.uasset",
 				"S:/Houdini/VirtualProductionStudioTool/StudioTool/Content/StarterContent/Architecture/Floor_400x400.uasset",
 				"S:/Houdini/VirtualProductionStudioTool/StudioTool/Content/Main.umap",
 				"S:/Houdini/VirtualProductionStudioTool/StudioTool/Content/StudioTest.umap",

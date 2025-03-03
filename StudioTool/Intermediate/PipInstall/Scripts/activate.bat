@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=S:\Houdini\VirtualProductionStudioTool\StudioTool\Intermediate\PipInstall
+set VIRTUAL_ENV=D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioTool\Intermediate\PipInstall
 
 if not defined PROMPT set PROMPT=$P$G
 
