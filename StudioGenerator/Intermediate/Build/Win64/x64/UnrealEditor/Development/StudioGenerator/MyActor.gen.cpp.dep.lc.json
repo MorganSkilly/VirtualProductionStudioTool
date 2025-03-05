@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\localworkdir\\1903578\\virtualproductionstudiotool\\studiogenerator\\intermediate\\build\\win64\\unrealeditor\\inc\\studiogenerator\\uht\\myactor.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\localworkdir\\1903578\\virtualproductionstudiotool\\studiogenerator\\intermediate\\build\\win64\\x64\\studiogeneratoreditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\localworkdir\\1903578\\virtualproductionstudiotool\\studiogenerator\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\studiogenerator\\definitions.studiogenerator.h",
+            "d:\\localworkdir\\1903578\\virtualproductionstudiotool\\studiogenerator\\source\\studiogenerator\\myactor.h",
+            "d:\\localworkdir\\1903578\\virtualproductionstudiotool\\studiogenerator\\intermediate\\build\\win64\\unrealeditor\\inc\\studiogenerator\\uht\\myactor.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

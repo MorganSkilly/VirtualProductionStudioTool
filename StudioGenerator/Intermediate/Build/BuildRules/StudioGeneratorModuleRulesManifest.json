@@ -1,0 +1,11 @@
+{
+	"SourceFiles": [
+		"D:\\LocalWorkDir\\1903578\\VirtualProductionStudioTool\\StudioGenerator\\Source\\StudioGenerator\\StudioGenerator.Build.cs",
+		"D:\\LocalWorkDir\\1903578\\VirtualProductionStudioTool\\StudioGenerator\\Plugins\\HoudiniEngineForUnreal\\Source\\HoudiniEngineEditor\\HoudiniEngineEditor.Build.cs",
+		"D:\\LocalWorkDir\\1903578\\VirtualProductionStudioTool\\StudioGenerator\\Plugins\\HoudiniEngineForUnreal\\Source\\HoudiniEngineRuntime\\HoudiniEngineRuntime.Build.cs",
+		"D:\\LocalWorkDir\\1903578\\VirtualProductionStudioTool\\StudioGenerator\\Plugins\\HoudiniEngineForUnreal\\Source\\HoudiniEngine\\HoudiniEngine.Build.cs",
+		"D:\\LocalWorkDir\\1903578\\VirtualProductionStudioTool\\StudioGenerator\\Source\\StudioGenerator.Target.cs",
+		"D:\\LocalWorkDir\\1903578\\VirtualProductionStudioTool\\StudioGenerator\\Source\\StudioGeneratorEditor.Target.cs"
+	],
+	"EngineVersion": "5.4.3"
+}

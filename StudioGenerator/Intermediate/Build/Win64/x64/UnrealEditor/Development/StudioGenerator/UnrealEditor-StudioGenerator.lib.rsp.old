@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-StudioGenerator.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioGenerator\Intermediate\Build\Win64\x64\StudioGeneratorEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioGenerator\Intermediate\Build\Win64\x64\UnrealEditor\Development\StudioGenerator\StudioGenerator.cpp.obj"
+"D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioGenerator\Intermediate\Build\Win64\x64\UnrealEditor\Development\StudioGenerator\Default.rc2.res"
+/OUT:"D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioGenerator\Intermediate\Build\Win64\x64\UnrealEditor\Development\StudioGenerator\UnrealEditor-StudioGenerator.lib"

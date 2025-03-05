@@ -1,0 +1,23 @@
+{
+	"version": 1,
+	"changelists": [
+		{
+			"guid": "00000000000000000000000000000000",
+			"description": "Default Uncontrolled Changelist",
+			"files": [
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/LED_Screen_Mat/SubPixels/FlipChip2x2LEDPixel.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/LED_Screen_Mat/SubPixels/FlipChip2x2LEDPixelDiffuser.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/LED_Screen_Mat/SubPixels/FlipChip2x2LEDPixelDiffuserWhite.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F_BP_1.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/HoudiniEngine/Temp/MorganSkilly_nDisplayMeshCreator_1_0/8BD4DB4F/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_HSM.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F_1.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F_BP_2.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/WatersEdge/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo_8BD4DB4F_BP.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/HoudiniEngine/Temp/MorganSkilly_nDisplayMeshCreator_1_0/8BD4DB4F/MorganSkilly_nDisplayMeshCreator_1_0_3_4_0_main_geo.uasset",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/Main.umap",
+				"D:/LocalWorkDir/1903578/VirtualProductionStudioTool/StudioGenerator/Content/HDAs/MorganSkilly_nDisplayMeshCreator_1_0.uasset"
+			]
+		}
+	]
+}
