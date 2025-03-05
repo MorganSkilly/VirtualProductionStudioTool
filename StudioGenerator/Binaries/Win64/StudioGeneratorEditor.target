@@ -3598,31 +3598,31 @@
 			"Type": "RequiredResource"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor-HoudiniEngine.dll",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor-HoudiniEngine.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor-HoudiniEngine.pdb",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor-HoudiniEngine.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor-HoudiniEngineEditor.dll",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor-HoudiniEngineEditor.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor-HoudiniEngineEditor.pdb",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor-HoudiniEngineEditor.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor-HoudiniEngineRuntime.dll",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor-HoudiniEngineRuntime.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor-HoudiniEngineRuntime.pdb",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor-HoudiniEngineRuntime.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/Binaries/Win64/UnrealEditor.modules",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		}
 	],
@@ -26652,7 +26652,7 @@
 			"Type": "UFS"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/HoudiniEngineForUnreal/HoudiniEngine.uplugin",
+			"Path": "$(ProjectDir)/Plugins/HoudiniEngine/HoudiniEngine.uplugin",
 			"Type": "UFS"
 		},
 		{

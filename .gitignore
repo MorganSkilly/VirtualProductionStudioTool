@@ -72,4 +72,7 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-/StudioTool/Saved
+
+# Un-ignore Houdini Engine plugin
+!Plugins/HoudiniEngine
+!Plugins/HoudiniEngine/**
