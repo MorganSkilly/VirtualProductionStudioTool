@@ -76,3 +76,4 @@ DerivedDataCache/*
 # Un-ignore Houdini Engine plugin
 !Plugins/HoudiniEngine
 !Plugins/HoudiniEngine/**
+/StudioGenerator/Plugins/HoudiniEngine/Binaries
