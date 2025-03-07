@@ -115,3 +115,7 @@ StudioTool/Plugins/Developer/*
 
 # Cache files for the editor to use
 StudioTool/DerivedDataCache/*
+/StudioGenerator/Plugins/HoudiniEngine
+/StudioGenerator/Content/HDAs/backup
+/StudioGenerator/Content/HoudiniEngine/Bake
+/StudioGenerator/Content/HoudiniEngine/Temp
