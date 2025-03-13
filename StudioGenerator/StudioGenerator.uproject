@@ -26,6 +26,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "nDisplayMeshTool",
+			"Enabled": true
+		},
+		{
 			"Name": "nDisplay",
 			"Enabled": true,
 			"SupportedTargetPlatforms": [
@@ -39,6 +43,10 @@
 		},
 		{
 			"Name": "StaticMeshEditorModeling",
+			"Enabled": true
+		},
+		{
+			"Name": "GeometryScripting",
 			"Enabled": true
 		}
 	]

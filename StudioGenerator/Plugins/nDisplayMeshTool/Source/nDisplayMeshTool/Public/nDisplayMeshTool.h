@@ -8,7 +8,7 @@
 class FToolBarBuilder;
 class FMenuBuilder;
 
-class FnDisplayProceduralVolumeModule : public IModuleInterface
+class FnDisplayMeshToolModule : public IModuleInterface
 {
 public:
 
