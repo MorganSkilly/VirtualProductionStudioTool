@@ -32,6 +32,14 @@
 				"Win64",
 				"Linux"
 			]
+		},
+		{
+			"Name": "LiveUpdateForSlate",
+			"Enabled": true
+		},
+		{
+			"Name": "StaticMeshEditorModeling",
+			"Enabled": true
 		}
 	]
 }
