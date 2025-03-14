@@ -10,9 +10,6 @@ public class nDisplayMeshTool : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-                "ProceduralMeshComponent",
-                "AssetRegistry",
-                "StaticMeshDescription",
 				// ... add public include paths required here ...
 			}
 			);
@@ -20,9 +17,6 @@ public class nDisplayMeshTool : ModuleRules
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
-                "ProceduralMeshComponent",
-                "AssetRegistry",
-                "StaticMeshDescription",
 				// ... add other private include paths required here ...
 			}
 			);
@@ -52,9 +46,6 @@ public class nDisplayMeshTool : ModuleRules
 				"Engine",
 				"Slate",
                 "SlateCore",
-                "ProceduralMeshComponent",
-                "AssetRegistry",
-                "StaticMeshDescription",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
