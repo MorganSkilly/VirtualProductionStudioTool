@@ -173,7 +173,14 @@ void AnDisplayVolume::ConvertProcToStatic()
 
     // Save the package
     FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-    bool bSaved = UPackage::SavePackage(Package, StaticMesh, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
+
+    // Create SavePackageArgs
+    FSavePackageArgs SaveArgs;
+    SaveArgs.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
+    SaveArgs.SaveFlags = SAVE_NoError;
+
+    // Use the new SavePackage method
+    bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
 
     if (bSaved)
     {

@@ -7,6 +7,7 @@
 #include "ProceduralMeshComponent.h"
 #include "ProceduralMeshConversion.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "UObject/SavePackage.h"
 
 #include "nDisplayVolume.generated.h"
 
