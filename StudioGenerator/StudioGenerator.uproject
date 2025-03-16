@@ -22,10 +22,6 @@
 			]
 		},
 		{
-			"Name": "HoudiniEngine",
-			"Enabled": true
-		},
-		{
 			"Name": "nDisplayMeshTool",
 			"Enabled": true
 		},

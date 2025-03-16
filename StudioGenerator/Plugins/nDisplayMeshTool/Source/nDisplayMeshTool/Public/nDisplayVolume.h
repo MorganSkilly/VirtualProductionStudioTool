@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/StaticMeshActor.h"
+
 #include "ProceduralMeshComponent.h"
 #include "ProceduralMeshConversion.h"
 #include "AssetRegistry/AssetRegistryModule.h"
