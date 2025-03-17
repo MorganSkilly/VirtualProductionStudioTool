@@ -29,6 +29,9 @@ public class nDisplayMeshTool : ModuleRules
                 "ProceduralMeshComponent",
                 "AssetRegistry",
                 "StaticMeshDescription",
+                "EditorScriptingUtilities",
+                "AssetTools",
+                "UnrealEd",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -46,6 +49,9 @@ public class nDisplayMeshTool : ModuleRules
 				"Engine",
 				"Slate",
                 "SlateCore",
+                "EditorScriptingUtilities",
+                "AssetTools",
+                "UnrealEd",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
