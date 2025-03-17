@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
+#include "ProceduralMeshComponent.h"
+#include <vector>
 
 #include "nDisplayCurvedWall.generated.h"
 
@@ -18,6 +20,8 @@ class NDISPLAYMESHTOOL_API UnDisplayCurvedWall
 
 public:
 	UnDisplayCurvedWall(const FObjectInitializer& ObjectInitializer);
+	virtual UProceduralMeshComponent* CreateMeshProcedurally(UProceduralMeshComponent* procMesh, const std::vector<float>& offsetAngles);
+	virtual UStaticMesh* ConvertToStatic(UProceduralMeshComponent* procMesh);
 
 public:
 	/** Return the wall panel array size. */
@@ -54,9 +58,7 @@ protected:
 
 #if WITH_EDITORONLY_DATA
 protected:
-	//friend class FDisplayClusterConfiguratorScreenDetailsCustomization;
-
-	/** Adjust the size of the screen. */
+	/** Adjust the size of the wall. */
 	UPROPERTY(EditDefaultsOnly, Category = "Curved Wall", meta = (DisplayName = "Curved Wall Array Size", AllowPreserveRatio))
 	FVector2D CurvedWallArraySize;
 
@@ -65,5 +67,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Curved Wall", meta = (DisplayName = "Curved Wall Product Resolution", AllowPreserveRatio))
 	FVector2D CurvedWallProductResolution;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Curved Wall", meta = (DisplayName = "Curved Wall Procedural Mesh"))
+	UProceduralMeshComponent* ProceduralCurvedWallMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Curved Wall", meta = (DisplayName = "Curved Wall Static Mesh"))
+	UStaticMesh* StaticCurvedWallMesh;
 #endif
 };
