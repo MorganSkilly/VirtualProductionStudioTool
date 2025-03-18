@@ -36,6 +36,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	int32 ArrayWidth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	int32 ArrayHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
 	ULedProduct* LedProductDataAsset;
 
 	/** Name of the LED panel */

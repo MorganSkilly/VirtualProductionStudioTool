@@ -22,7 +22,7 @@ ALedPanelArray::ALedPanelArray()
 void ALedPanelArray::PostActorCreated()
 {
 	FVector2D panelsArray = FVector2D(24, 8);
-	FVector2D panelsDimensions = FVector2D(600, 300);
+	FVector2D panelsDimensions = FVector2D(600, 337.5);
 
 	//Super::PostActorCreated();
 	CreateMesh({ 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,3.5f,9.7f,9.6f,9.7f,9.7f,
@@ -33,8 +33,10 @@ void ALedPanelArray::PostActorCreated()
 // This is called when actor is already in level and map is opened
 void ALedPanelArray::PostLoad()
 {
+	/*FVector2D panelsArray = FVector2D(ArrayWidth - 1, ArrayHeight - 1);
+	FVector2D panelsDimensions = FVector2D(CabinetResolutionX, CabinetResolutionY);*/
 	FVector2D panelsArray = FVector2D(24, 8);
-	FVector2D panelsDimensions = FVector2D(600, 300);
+	FVector2D panelsDimensions = FVector2D(600, 337.5);
 	Super::PostLoad();
 	CreateMesh({ 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,3.5f,9.7f,9.6f,9.7f,9.7f,
 		9.5f,10.0f,3.3f,2.9f,3.4f,3.4f,3.4f,3.5f,3.5f,3.7f,3.9f,3.5f,3.9f }, panelsArray, panelsDimensions);
@@ -69,6 +71,8 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions)
 {
 	TArray<FVector> vertices;
+	TArray<int32> Triangles;
+
 	float cumulative_angle = 0.0;
 
 	FVector vectorPos = { 0, 0, 0 };
@@ -92,10 +96,25 @@ void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVe
 		}
 	}
 
-	TArray<int32> Triangles;
-	Triangles.Add(0);
-	Triangles.Add(1);
-	Triangles.Add(2);
+	for (int32 i = 0; i < panels.X - 1; i++)
+	{
+		for (int32 j = 0; j < panels.Y - 1; j++)
+		{
+			int32 topLeft = j + (i * panels.Y);
+			int32 topRight = topLeft + 1;
+			int32 bottomLeft = topLeft + panels.Y;
+			int32 bottomRight = bottomLeft + 1;
+
+			Triangles.Add(topLeft);
+			Triangles.Add(bottomLeft);
+			Triangles.Add(bottomRight);
+
+			Triangles.Add(topLeft);
+			Triangles.Add(bottomRight);
+			Triangles.Add(topRight);
+		}
+	}
+
 
 	TArray<FVector> normals;
 	normals.Add(FVector(1, 0, 0));
