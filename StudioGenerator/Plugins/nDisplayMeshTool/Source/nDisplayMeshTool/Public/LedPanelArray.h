@@ -8,6 +8,8 @@
 #include "ProceduralMeshConversion.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/SavePackage.h"
+#include "Engine/DataAsset.h"
+#include "LedProduct.h"
 
 #include "LedPanelArray.generated.h"
 
@@ -25,20 +27,53 @@ protected:
 	virtual void PostActorCreated() override;
 	virtual void PostLoad() override;
 	virtual void BeginPlay() override;
-	virtual void CreateMesh();
-
+	virtual void CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions);
+	virtual void UpdateLedProduct();
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//UPROPERTY(VisibleAnywhere, Category = "LED Product")
-	//UDataAsset* LedProductDataAsset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	ULedProduct* LedProductDataAsset;
 
-private:
+	/** Name of the LED panel */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	FString ModelName;
+
+	/** Physical size of the LED panel in cm (X = width, Y = height, Z = depth) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	FVector CabinetSize;
+
+	/** Resolution width (pixels) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	int32 CabinetResolutionX;
+
+	/** Resolution height (pixels) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	int32 CabinetResolutionY;
+
+	/** Pixel Pitch in mm */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	float PixelPitch;
+
+	/** The material used for rendering the LED panel */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UMaterialInterface* PanelMaterial;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UProceduralMeshComponent* GeneratedProceduralMeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* GeneratedStaticMeshComponent;
+
+private:	
+	/*
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UProceduralMeshComponent* GeneratedProceduralMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	UStaticMeshComponent* GeneratedStaticMeshComponent;
+	UStaticMeshComponent* GeneratedStaticMeshComponent;*/
 
 };
