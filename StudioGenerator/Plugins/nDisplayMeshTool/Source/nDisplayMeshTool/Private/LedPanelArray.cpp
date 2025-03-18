@@ -21,12 +21,7 @@ ALedPanelArray::ALedPanelArray()
 // This is called when actor is spawned (at runtime or when you drop it into the world in editor)
 void ALedPanelArray::PostActorCreated()
 {
-	FVector2D panelsArray = FVector2D(24, 8);
-	FVector2D panelsDimensions = FVector2D(600, 337.5);
-
-	//Super::PostActorCreated();
-	CreateMesh({ 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,3.5f,9.7f,9.6f,9.7f,9.7f,
-		9.5f,10.0f,3.3f,2.9f,3.4f,3.4f,3.4f,3.5f,3.5f,3.7f,3.9f,3.5f,3.9f}, panelsArray, panelsDimensions);
+	Super::PostActorCreated();
 
 }
 
@@ -35,11 +30,7 @@ void ALedPanelArray::PostLoad()
 {
 	/*FVector2D panelsArray = FVector2D(ArrayWidth - 1, ArrayHeight - 1);
 	FVector2D panelsDimensions = FVector2D(CabinetResolutionX, CabinetResolutionY);*/
-	FVector2D panelsArray = FVector2D(24, 8);
-	FVector2D panelsDimensions = FVector2D(600, 337.5);
 	Super::PostLoad();
-	CreateMesh({ 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,3.5f,9.7f,9.6f,9.7f,9.7f,
-		9.5f,10.0f,3.3f,2.9f,3.4f,3.4f,3.4f,3.5f,3.5f,3.7f,3.9f,3.5f,3.9f }, panelsArray, panelsDimensions);
 }
 
 // Called when the game starts or when spawned
@@ -51,8 +42,7 @@ void ALedPanelArray::BeginPlay()
 // Called every frame
 void ALedPanelArray::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+	Super::Tick(DeltaTime);	
 }
 
 #if WITH_EDITOR
@@ -64,6 +54,9 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(ALedPanelArray, LedProductDataAsset))
 	{
 		UpdateLedProduct();
+		FVector2D panelsArray = FVector2D(ArrayWidth - 1, ArrayHeight - 1);
+		FVector2D panelsDimensions = FVector2D(CabinetSize.X, CabinetSize.Y);
+		CreateMesh(PanelAngles, panelsArray, panelsDimensions);
 	}
 }
 #endif
