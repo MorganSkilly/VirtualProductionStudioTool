@@ -10,6 +10,7 @@
 #include "UObject/SavePackage.h"
 #include "Engine/DataAsset.h"
 #include "LedProduct.h"
+#include "DrawDebugHelpers.h"
 
 #include "LedPanelArray.generated.h"
 
@@ -77,7 +78,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* GeneratedStaticMeshComponent;
 
-private:	
+private:
 	/*
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UProceduralMeshComponent* GeneratedProceduralMeshComponent;

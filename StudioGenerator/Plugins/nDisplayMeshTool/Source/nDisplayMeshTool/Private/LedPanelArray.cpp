@@ -54,7 +54,7 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(ALedPanelArray, LedProductDataAsset))
 	{
 		UpdateLedProduct();
-		FVector2D panelsArray = FVector2D(ArrayWidth - 1, ArrayHeight - 1);
+		FVector2D panelsArray = FVector2D(ArrayWidth, ArrayHeight);
 		FVector2D panelsDimensions = FVector2D(CabinetSize.X, CabinetSize.Y);
 		CreateMesh(PanelAngles, panelsArray, panelsDimensions);
 	}
@@ -64,7 +64,7 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions)
 {
 	TArray<FVector> vertices;
-	TArray<int32> Triangles;
+	TArray<int32> triangles;
 
 	float cumulative_angle = 0.0;
 
@@ -98,50 +98,70 @@ void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVe
 			int32 bottomLeft = topLeft + panels.Y;
 			int32 bottomRight = bottomLeft + 1;
 
-			Triangles.Add(topLeft);
-			Triangles.Add(bottomLeft);
-			Triangles.Add(bottomRight);
+			triangles.Add(topLeft);
+			triangles.Add(bottomLeft);
+			triangles.Add(bottomRight);
 
-			Triangles.Add(topLeft);
-			Triangles.Add(bottomRight);
-			Triangles.Add(topRight);
+			triangles.Add(topLeft);
+			triangles.Add(bottomRight);
+			triangles.Add(topRight);
 		}
 	}
 
+	for (int32 i = 0; i < vertices.Num(); i++)
+	{
+		DrawDebugDirectionalArrow(GetWorld(), FVector(0, 0, 0), vertices[i], 120.f, FColor::Red, true, -1.f, 0, 5.f);
+	}
 
-	TArray<FVector> normals;
-	normals.Add(FVector(1, 0, 0));
-	normals.Add(FVector(1, 0, 0));
-	normals.Add(FVector(1, 0, 0));
+	//TArray<FVector> normals;
+	//normals.Add(FVector(1, 0, 0));
+	//normals.Add(FVector(1, 0, 0));
+	//normals.Add(FVector(1, 0, 0));
 
-	TArray<FVector2D> UV0;
-	UV0.Add(FVector2D(0, 0));
-	UV0.Add(FVector2D(10, 0));
-	UV0.Add(FVector2D(0, 10));
+	//TArray<FVector2D> UV0;
+	//UV0.Add(FVector2D(0, 0));
+	//UV0.Add(FVector2D(10, 0));
+	//UV0.Add(FVector2D(0, 10));
 
-	TArray<FProcMeshTangent> tangents;
-	tangents.Add(FProcMeshTangent(0, 1, 0));
-	tangents.Add(FProcMeshTangent(0, 1, 0));
-	tangents.Add(FProcMeshTangent(0, 1, 0));
+	//TArray<FProcMeshTangent> tangents;
+	//tangents.Add(FProcMeshTangent(0, 1, 0));
+	//tangents.Add(FProcMeshTangent(0, 1, 0));
+	//tangents.Add(FProcMeshTangent(0, 1, 0));
 
-	TArray<FLinearColor> vertexColors;
-	vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
-	vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
-	vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
+	//TArray<FLinearColor> vertexColors;
+	//vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
+	//vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
+	//vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
 
-	GeneratedProceduralMeshComponent->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+	GeneratedProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, {}, {}, {}, {}, false);
 
+	
 	//ConvertProcToStatic();
 }
 
 
 void ALedPanelArray::UpdateLedProduct()
 {
-	ModelName = *LedProductDataAsset->ModelName;
-	CabinetSize = LedProductDataAsset->CabinetSize;
-	CabinetResolutionX = LedProductDataAsset->CabinetResolutionX;
-	CabinetResolutionY = LedProductDataAsset->CabinetResolutionY;
-	PixelPitch = LedProductDataAsset->PixelPitch;
-	PanelMaterial = LedProductDataAsset->PanelMaterial;
+	if (LedProductDataAsset)
+	{
+		if (*LedProductDataAsset->ModelName)
+		{
+			ModelName = *LedProductDataAsset->ModelName;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ModelName is nullptr in LedProductDataAsset"));
+		}
+
+		CabinetSize = LedProductDataAsset->CabinetSize;
+		CabinetResolutionX = LedProductDataAsset->CabinetResolutionX;
+		CabinetResolutionY = LedProductDataAsset->CabinetResolutionY;
+		PixelPitch = LedProductDataAsset->PixelPitch;
+		PanelMaterial = LedProductDataAsset->PanelMaterial;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("LedProductDataAsset is nullptr!"));
+	}
 }
 
