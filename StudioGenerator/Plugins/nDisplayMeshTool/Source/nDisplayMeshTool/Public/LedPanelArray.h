@@ -50,7 +50,7 @@ public:
 
 	/** Name of the LED panel */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
-	FString ModelName;
+	FString ModelName = "modelName";
 
 	/** Physical size of the LED panel in cm (X = width, Y = height, Z = depth) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
@@ -79,6 +79,7 @@ public:
 	UStaticMeshComponent* GeneratedStaticMeshComponent;
 
 private:
+	virtual void ConvertProcToStatic();
 	/*
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UProceduralMeshComponent* GeneratedProceduralMeshComponent;

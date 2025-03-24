@@ -10,8 +10,11 @@ ALedPanelArray::ALedPanelArray()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create the procedural mesh component
-	GeneratedProceduralMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedProceduralMeshComponent"));
-	GeneratedProceduralMeshComponent->SetupAttachment(RootComponent);
+    GeneratedProceduralMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedProceduralMeshComponent"));
+    GeneratedProceduralMeshComponent->SetupAttachment(RootComponent);
+
+    GeneratedStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GeneratedStaticMeshComponent"));
+    GeneratedStaticMeshComponent->SetupAttachment(RootComponent);
 
 	// Optional settings
 	GeneratedProceduralMeshComponent->bUseAsyncCooking = true;
@@ -54,9 +57,15 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(ALedPanelArray, LedProductDataAsset))
 	{
 		UpdateLedProduct();
-		FVector2D panelsArray = FVector2D(ArrayWidth, ArrayHeight);
+        FVector2D panelsArray = FVector2D(ArrayWidth, ArrayHeight);
 		FVector2D panelsDimensions = FVector2D(CabinetSize.X, CabinetSize.Y);
 		CreateMesh(PanelAngles, panelsArray, panelsDimensions);
+        ConvertProcToStatic();
+
+
+
+        GeneratedProceduralMeshComponent->SetVisibility(false, true);
+        GeneratedProceduralMeshComponent->SetHiddenInGame(true);
 	}
 }
 #endif
@@ -206,3 +215,117 @@ void ALedPanelArray::UpdateLedProduct()
 	}
 }
 
+void ALedPanelArray::ConvertProcToStatic()
+{
+    // Find the procedural mesh component
+    TArray<UProceduralMeshComponent*> ChildMeshes;
+    this->GetComponents<UProceduralMeshComponent>(ChildMeshes);
+
+    if (ChildMeshes.Num() <= 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No procedural mesh component found!"));
+        return;
+    }
+
+    UProceduralMeshComponent* ProcMeshComp = ChildMeshes[0];
+    if (!ProcMeshComp)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Invalid procedural mesh component!"));
+        return;
+    }
+
+    // Build mesh description
+    FMeshDescription MeshDescription = BuildMeshDescription(ProcMeshComp);
+
+    if (MeshDescription.Polygons().Num() <= 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No polygons in mesh description!"));
+        return;
+    }
+
+    // Setup paths and names
+    FString NewNameSuggestion = ModelName + FString::FromInt(ArrayWidth) + "x" + FString::FromInt(ArrayHeight) + "_" + FString::FromInt(GetUniqueID());
+    FString ContentDir = FPaths::ProjectContentDir() / TEXT("GeneratedMeshes");
+
+    // Create directory if it doesn't exist
+    IFileManager::Get().MakeDirectory(*ContentDir, true);
+
+    FString PackageName = TEXT("/Game/GeneratedMeshes/") + NewNameSuggestion;
+    UPackage* Package = CreatePackage(*PackageName);
+
+    if (!Package)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to create package!"));
+        return;
+    }
+
+    // Create the static mesh
+    UStaticMesh* StaticMesh = NewObject<UStaticMesh>(Package, *NewNameSuggestion, RF_Public | RF_Standalone);
+    if (!StaticMesh)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to create static mesh!"));
+        return;
+    }
+
+    StaticMesh->InitResources();
+    StaticMesh->SetLightingGuid();
+
+    // Add source to new StaticMesh
+    FStaticMeshSourceModel& SrcModel = StaticMesh->AddSourceModel();
+    SrcModel.BuildSettings.bRecomputeNormals = false;
+    SrcModel.BuildSettings.bRecomputeTangents = false;
+    SrcModel.BuildSettings.bRemoveDegenerates = false;
+    SrcModel.BuildSettings.bUseHighPrecisionTangentBasis = false;
+    SrcModel.BuildSettings.bUseFullPrecisionUVs = false;
+    SrcModel.BuildSettings.bGenerateLightmapUVs = true;
+    SrcModel.BuildSettings.SrcLightmapIndex = 0;
+    SrcModel.BuildSettings.DstLightmapIndex = 1;
+
+    // Create mesh description and commit it
+    StaticMesh->CreateMeshDescription(0, MoveTemp(MeshDescription));
+    StaticMesh->CommitMeshDescription(0);
+
+    // Copy materials
+    const int32 NumSections = ProcMeshComp->GetNumSections();
+    for (int32 SectionIdx = 0; SectionIdx < NumSections; SectionIdx++)
+    {
+        UMaterialInterface* Material = ProcMeshComp->GetMaterial(SectionIdx);
+        if (Material)
+        {
+            StaticMesh->GetStaticMaterials().Add(FStaticMaterial(Material));
+        }
+    }
+
+    // Set import version and build
+    StaticMesh->ImportVersion = EImportStaticMeshVersion::LastVersion;
+    StaticMesh->Build(false);
+    StaticMesh->PostEditChange();
+
+    // Mark package as dirty
+    Package->MarkPackageDirty();
+
+    // Save the package
+    FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+
+    // Create SavePackageArgs
+    FSavePackageArgs SaveArgs;
+    SaveArgs.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
+    SaveArgs.SaveFlags = SAVE_NoError;
+
+    // Use the new SavePackage method
+    bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
+
+    if (bSaved)
+    {
+        // Now notify asset registry
+        FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+        AssetRegistryModule.AssetCreated(StaticMesh);
+        UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
+
+        GeneratedStaticMeshComponent->SetStaticMesh(StaticMesh);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
+    }
+}
