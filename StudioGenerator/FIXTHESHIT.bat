@@ -1,2 +1,0 @@
-cd "C:\Program Files\Epic Games\UE_5.4\Engine\Binaries\DotNET\UnrealBuildTool"
-& "C:\Program Files\Epic Games\UE_5.4\Engine\Binaries\ThirdParty\DotNet\6.0.302\windows\dotnet.exe" .\UnrealBuildTool.dll -2022 -projectfiles -project="D:\LocalWorkDir\1903578\VirtualProductionStudioTool\StudioGenerator\StudioGenerator.uproject" -game -engine

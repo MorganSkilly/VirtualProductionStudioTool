@@ -64,8 +64,10 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 
 
 
-        GeneratedProceduralMeshComponent->SetVisibility(false, true);
-        GeneratedProceduralMeshComponent->SetHiddenInGame(true);
+        GeneratedProceduralMeshComponent->SetVisibility(true, true);
+        GeneratedProceduralMeshComponent->SetHiddenInGame(false);
+        GeneratedStaticMeshComponent->SetVisibility(false, true);
+        GeneratedStaticMeshComponent->SetHiddenInGame(true);
 	}
 }
 #endif
@@ -109,7 +111,7 @@ void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVe
 			float U = static_cast<float>(i) / panels.X;
 			float V = static_cast<float>(j) / panels.Y;
 
-			UV0.Add(FVector2D(U, V));
+			UV0.Add(FVector2D(U, 1 - V));
 
 			DrawDebugPoint(GetWorld(), vectorPos, 10.f, FColor::Green, false, 10.f, 0);
 		}
@@ -149,13 +151,13 @@ void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVe
             triangles.Add(bottomRight);
             triangles.Add(bottomLeft);
 
-            DrawDebugLine(GetWorld(), vertices[topLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 5.f);
-            DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 5.f);
-            DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topLeft], FColor::Red, false, 10.f, 0, 5.f);
+            DrawDebugLine(GetWorld(), vertices[topLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 1.f);
+            DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 1.f);
+            DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topLeft], FColor::Red, false, 10.f, 0, 1.f);
 
-            DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomRight], FColor::Red, false, 10.f, 0, 5.f);
-            DrawDebugLine(GetWorld(), vertices[bottomRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 5.f);
-            DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 5.f);
+            DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomRight], FColor::Red, false, 10.f, 0, 1.f);
+            DrawDebugLine(GetWorld(), vertices[bottomRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 1.f);
+            DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 1.f);
         }
 
         nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
@@ -185,7 +187,6 @@ void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVe
 
 	GeneratedProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, {}, UV0, {}, {}, false);
 
-	
 	//ConvertProcToStatic();
 }
 
@@ -208,6 +209,11 @@ void ALedPanelArray::UpdateLedProduct()
 		CabinetResolutionY = LedProductDataAsset->CabinetResolutionY;
 		PixelPitch = LedProductDataAsset->PixelPitch;
 		PanelMaterial = LedProductDataAsset->PanelMaterial;
+
+        UMaterialInstanceDynamic* materialInstance = GeneratedProceduralMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PanelMaterial);
+
+        materialInstance->SetScalarParameterValue("Width", ArrayWidth * LedProductDataAsset->CabinetResolutionX);
+        materialInstance->SetScalarParameterValue("Height", ArrayHeight * LedProductDataAsset->CabinetResolutionY);
 	}
 	else
 	{
@@ -272,11 +278,11 @@ void ALedPanelArray::ConvertProcToStatic()
 
     // Add source to new StaticMesh
     FStaticMeshSourceModel& SrcModel = StaticMesh->AddSourceModel();
-    SrcModel.BuildSettings.bRecomputeNormals = false;
-    SrcModel.BuildSettings.bRecomputeTangents = false;
-    SrcModel.BuildSettings.bRemoveDegenerates = false;
+    SrcModel.BuildSettings.bRecomputeNormals = true;
+    SrcModel.BuildSettings.bRecomputeTangents = true;
+    SrcModel.BuildSettings.bRemoveDegenerates = true;
     SrcModel.BuildSettings.bUseHighPrecisionTangentBasis = false;
-    SrcModel.BuildSettings.bUseFullPrecisionUVs = false;
+    SrcModel.BuildSettings.bUseFullPrecisionUVs = true;
     SrcModel.BuildSettings.bGenerateLightmapUVs = true;
     SrcModel.BuildSettings.SrcLightmapIndex = 0;
     SrcModel.BuildSettings.DstLightmapIndex = 1;
@@ -312,20 +318,19 @@ void ALedPanelArray::ConvertProcToStatic()
     SaveArgs.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
     SaveArgs.SaveFlags = SAVE_NoError;
 
-    // Use the new SavePackage method
-    bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
+    //bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
 
-    if (bSaved)
-    {
-        // Now notify asset registry
-        FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-        AssetRegistryModule.AssetCreated(StaticMesh);
-        UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
+    //if (bSaved)
+    //{
+    //    // Now notify asset registry
+    //    FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+    //    AssetRegistryModule.AssetCreated(StaticMesh);
+    //    UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
+    //}
+    //else
+    //{
+    //    UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
+    //}
 
-        GeneratedStaticMeshComponent->SetStaticMesh(StaticMesh);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
-    }
+    GeneratedStaticMeshComponent->SetStaticMesh(StaticMesh);
 }
