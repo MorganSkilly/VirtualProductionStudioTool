@@ -11,6 +11,8 @@
 #include "Engine/DataAsset.h"
 #include "LedProduct.h"
 #include "DrawDebugHelpers.h"
+#include "Materials/MaterialInstanceConstant.h"
+#include "Engine/StaticMeshActor.h"
 
 #include "LedPanelArray.generated.h"
 
@@ -28,13 +30,16 @@ protected:
 	virtual void PostActorCreated() override;
 	virtual void PostLoad() override;
 	virtual void BeginPlay() override;
-	virtual void CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions);
+	virtual void CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions, float canvasWidth);
 	virtual void UpdateLedProduct();
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
 	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	int32 CanvasWidth = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
 	int32 ArrayWidth = 4;

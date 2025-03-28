@@ -59,7 +59,7 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		UpdateLedProduct();
         FVector2D panelsArray = FVector2D(ArrayWidth, ArrayHeight);
 		FVector2D panelsDimensions = FVector2D(CabinetSize.X, CabinetSize.Y);
-		CreateMesh(PanelAngles, panelsArray, panelsDimensions);
+		CreateMesh(PanelAngles, panelsArray, panelsDimensions, CanvasWidth);
         ConvertProcToStatic();
 
 
@@ -72,97 +72,114 @@ void ALedPanelArray::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 }
 #endif
 
-void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions)
+void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions, float canvasWidth)
 {
-
-	TArray<FVector> vertices;
-	TArray<int32> triangles;
-	TArray<FVector2D> UV0;
-
-	float cumulative_angle = 0.0;
+    float cumulative_angle = 0.0;
 
 	FVector vectorPos = { 0, 0, 0 };
 	FVector nextPoint = vectorPos;
-		
 
-	for (int32 i = 0; i <= panels.X; i++)
-	{
-		float nextAngleRad;
+    int32 canvasCount = ceil(canvasWidth / panels.X);
+    int32 remainder = (int32)canvasWidth % (int32)panels.X;
 
-		if (i != 0 && panelAngles.IsValidIndex(i - 1))
-		{
-			nextAngleRad = FMath::DegreesToRadians(panelAngles[i - 1]);
-		}
-		else
-		{
-			nextAngleRad = FMath::DegreesToRadians(0);
-		}
-
-		cumulative_angle = cumulative_angle + nextAngleRad;
-
-		for (int32 j = 0; j <= panels.Y; j++)
-		{
-			vectorPos = nextPoint;
-			vectorPos.Z = j * panelDimensions.Y;
-
-			vertices.Add(vectorPos);
-
-			// Compute UV coordinates
-			float U = static_cast<float>(i) / panels.X;
-			float V = static_cast<float>(j) / panels.Y;
-
-			UV0.Add(FVector2D(U, 1 - V));
-
-			DrawDebugPoint(GetWorld(), vectorPos, 10.f, FColor::Green, false, 10.f, 0);
-		}
-
-		nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
-		nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(cumulative_angle);
-		nextPoint.Z = vectorPos.Z;
-	}
-
-    for (int32 i = 0; i < panels.X; i++)
+    for (int32 canvas = 0; canvas <= canvasCount; canvas++)
     {
-        float nextAngleRad;
+        TArray<FVector> vertices;
+        TArray<int32> triangles;
+        TArray<FVector2D> UV0;
 
-		if (i != 0 && panelAngles.IsValidIndex(i - 1))
+        int32 panelsInThisCanvas = canvasWidth;
+
+        if (canvas == canvasCount)
 		{
-			nextAngleRad = FMath::DegreesToRadians(panelAngles[i - 1]);
-		}
-		else
-		{
-			nextAngleRad = FMath::DegreesToRadians(0);
+			panelsInThisCanvas = remainder;
 		}
 
-        cumulative_angle += nextAngleRad;
-
-        for (int32 j = 0; j < panels.Y; j++)
+        for (int32 i = 0; i <= panelsInThisCanvas; i++)
         {
-            int32 topLeft = i * (panels.Y + 1) + j;
-            int32 topRight = (i + 1) * (panels.Y + 1) + j;
-            int32 bottomLeft = i * (panels.Y + 1) + (j + 1);
-            int32 bottomRight = (i + 1) * (panels.Y + 1) + (j + 1);
+            float nextAngleRad;
 
-            triangles.Add(topLeft);
-            triangles.Add(topRight);
-            triangles.Add(bottomLeft);
+            int32 panelIndex = (canvas * canvasCount) + i;
 
-            triangles.Add(topRight);
-            triangles.Add(bottomRight);
-            triangles.Add(bottomLeft);
+            if (panelIndex != 0 && panelAngles.IsValidIndex(panelIndex - 1))
+            {
+                nextAngleRad = FMath::DegreesToRadians(panelAngles[panelIndex - 1]);
+            }
+            else
+            {
+                nextAngleRad = FMath::DegreesToRadians(0);
+            }
 
-            DrawDebugLine(GetWorld(), vertices[topLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 1.f);
-            DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 1.f);
-            DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topLeft], FColor::Red, false, 10.f, 0, 1.f);
+            cumulative_angle = cumulative_angle + nextAngleRad;
 
-            DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomRight], FColor::Red, false, 10.f, 0, 1.f);
-            DrawDebugLine(GetWorld(), vertices[bottomRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 1.f);
-            DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 1.f);
+            for (int32 j = 0; j <= panels.Y; j++)
+            {
+                vectorPos = nextPoint;
+                vectorPos.Z = j * panelDimensions.Y;
+
+                vertices.Add(vectorPos);
+
+                // Compute UV coordinates
+                float U = static_cast<float>(panelIndex) / panels.X;
+                float V = static_cast<float>(j) / panels.Y;
+
+                UV0.Add(FVector2D(U, 1 - V));
+
+                DrawDebugPoint(GetWorld(), vectorPos, 10.f, FColor::Green, false, 10.f, 0);
+            }
+
+            nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
+            nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(cumulative_angle);
+            nextPoint.Z = vectorPos.Z;
         }
 
-        nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
-        nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(cumulative_angle);
-        nextPoint.Z = vectorPos.Z;
+        for (int32 i = 0; i < panelsInThisCanvas; i++)
+        {
+            float nextAngleRad;
+
+            int32 panelIndex = (canvas * canvasCount) + i;
+
+            if (panelIndex != 0 && panelAngles.IsValidIndex(panelIndex - 1))
+            {
+                nextAngleRad = FMath::DegreesToRadians(panelAngles[panelIndex - 1]);
+            }
+            else
+            {
+                nextAngleRad = FMath::DegreesToRadians(0);
+            }
+
+            cumulative_angle += nextAngleRad;
+
+            for (int32 j = 0; j < panels.Y; j++)
+            {
+                int32 topLeft = panelIndex * (panels.Y + 1) + j;
+                int32 topRight = (panelIndex + 1) * (panels.Y + 1) + j;
+                int32 bottomLeft = panelIndex * (panels.Y + 1) + (j + 1);
+                int32 bottomRight = (panelIndex + 1) * (panels.Y + 1) + (j + 1);
+
+                triangles.Add(topLeft);
+                triangles.Add(topRight);
+                triangles.Add(bottomLeft);
+
+                triangles.Add(topRight);
+                triangles.Add(bottomRight);
+                triangles.Add(bottomLeft);
+
+                DrawDebugLine(GetWorld(), vertices[topLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 1.f);
+                DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 1.f);
+                DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topLeft], FColor::Red, false, 10.f, 0, 1.f);
+
+                DrawDebugLine(GetWorld(), vertices[topRight], vertices[bottomRight], FColor::Red, false, 10.f, 0, 1.f);
+                DrawDebugLine(GetWorld(), vertices[bottomRight], vertices[bottomLeft], FColor::Red, false, 10.f, 0, 1.f);
+                DrawDebugLine(GetWorld(), vertices[bottomLeft], vertices[topRight], FColor::Red, false, 10.f, 0, 1.f);
+            }
+
+            nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
+            nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(cumulative_angle);
+            nextPoint.Z = vectorPos.Z;
+        }
+
+        GeneratedProceduralMeshComponent->CreateMeshSection(canvas, vertices, triangles, {}, UV0, {}, {}, false);
     }
 
 	//TArray<FVector> normals;
@@ -185,10 +202,9 @@ void ALedPanelArray::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVe
 	//vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
 	//vertexColors.Add(FLinearColor(0.75, 0.75, 0.75, 1.0));
 
-	GeneratedProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, {}, UV0, {}, {}, false);
-
 	//ConvertProcToStatic();
 }
+
 
 
 void ALedPanelArray::UpdateLedProduct()
@@ -210,10 +226,18 @@ void ALedPanelArray::UpdateLedProduct()
 		PixelPitch = LedProductDataAsset->PixelPitch;
 		PanelMaterial = LedProductDataAsset->PanelMaterial;
 
-        UMaterialInstanceDynamic* materialInstance = GeneratedProceduralMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PanelMaterial);
+        //UMaterialInstanceDynamic* materialInstance = GeneratedProceduralMeshComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, PanelMaterial);
+
+        // Create the UMaterialInstanceDynamic from the PanelMaterial
+        UMaterialInstanceDynamic* materialInstance = UMaterialInstanceDynamic::Create(PanelMaterial, GeneratedProceduralMeshComponent);
+
+        // Now assign the material instance to the mesh component
+        GeneratedProceduralMeshComponent->SetMaterial(0, materialInstance);
+
 
         materialInstance->SetScalarParameterValue("Width", ArrayWidth * LedProductDataAsset->CabinetResolutionX);
         materialInstance->SetScalarParameterValue("Height", ArrayHeight * LedProductDataAsset->CabinetResolutionY);
+
 	}
 	else
 	{
@@ -318,19 +342,48 @@ void ALedPanelArray::ConvertProcToStatic()
     SaveArgs.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
     SaveArgs.SaveFlags = SAVE_NoError;
 
-    //bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
+    // Get actor location and rotation before destroying it
+    FVector ActorLocation = GetActorLocation();
+    FRotator ActorRotation = GetActorRotation();
 
-    //if (bSaved)
-    //{
-    //    // Now notify asset registry
-    //    FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-    //    AssetRegistryModule.AssetCreated(StaticMesh);
-    //    UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
-    //}
+    // Ensure you are in the editor context
+    if (GEditor)
+    {
+        // Destroy the actor in the editor
+        GEditor->GetEditorWorldContext().World()->DestroyActor(this);
+        UE_LOG(LogTemp, Log, TEXT("Actor deleted from the level in the editor"));
+    }
 
+    bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
+
+    if (bSaved)
+    {
+        // Now notify asset registry
+        FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+        AssetRegistryModule.AssetCreated(StaticMesh);
+        UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
+
+        // Spawn the new static mesh actor at the original location and rotation
+        AStaticMeshActor* NewActor = GetWorld()->SpawnActor<AStaticMeshActor>(ActorLocation, ActorRotation);
+        if (NewActor)
+        {
+            // Set the static mesh to the newly spawned actor
+            NewActor->GetStaticMeshComponent()->SetStaticMesh(StaticMesh);
+            NewActor->SetActorLabel(NewNameSuggestion); // Optionally, you can set the actor's label/name
+            UE_LOG(LogTemp, Log, TEXT("Successfully spawned new static mesh actor at location: %s"), *ActorLocation.ToString());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to spawn new static mesh actor"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
+    }
+
+
+    // Optionally update your component with the newly created static mesh
     GeneratedStaticMeshComponent->SetStaticMesh(StaticMesh);
 }
+
