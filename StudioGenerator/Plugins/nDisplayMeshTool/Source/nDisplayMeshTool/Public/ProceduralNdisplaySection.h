@@ -3,8 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ProceduralMeshComponent.h"
 #include "GameFramework/Actor.h"
+#include "ProceduralMeshComponent.h"
+#include "LedProduct.h"
+#include "Engine/DataAsset.h"
+#include "ProceduralMeshConversion.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "UObject/SavePackage.h"
+
 #include "ProceduralNdisplaySection.generated.h"
 
 UCLASS()
@@ -23,71 +29,95 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Procedural mesh generation entry point
+	
+	/** Bool to enable automatic mesh generation on value change */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
+	bool AutoUpdate = false;
+	
+	/** Function callable from the editor to generate the procedural mesh component */
 	UFUNCTION(CallInEditor, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	void GenerateProceduralMesh();
+	
+	/** Function callable from the editor to generate the static mesh component */
+	UFUNCTION(CallInEditor, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 1))
+	void ConvertToStaticMesh();
 
 protected:
-
-	/** Mesh Component that holds the generated geometry */
+	
+	/** Mesh Component that holds the generated procedural geometry */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
+	AProceduralNdisplaySection* SectionToSnapTo;
+	
+	/** Mesh Component that holds the generated procedural geometry */
 	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
-	UProceduralMeshComponent* MeshComponent;
+	UProceduralMeshComponent* ProceduralMeshComponent;
+	
+	/** Mesh Component that holds the generated static geometry */
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
+	UStaticMeshComponent* StaticMeshComponent;
 
-	/** Number of tiles along the X axis */
+	/** Volume/Wall Array Width */
 	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
-	int32 NumX = 10;
-
-	/** Number of tiles along the Y axis */
-	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
-	int32 NumY = 10;
-
-	/** Size of each tile in Unreal units */
-	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
-	float TileSize = 100.0f;
-
-	/** Whether to create collision for the mesh */
-	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
-	bool bCreateCollision = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
 	int32 ArrayWidth = 4;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	/** Volume/Wall Array Height */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	int32 ArrayHeight = 4;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
-	TArray<float> PanelAngles = TArray<float>({ 10.0f, 10.0f, 10.0f, 10.0f });
+	/** Angular offset between each panel */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (ClampMin = "-180.0", ClampMax = "180.0", DisplayPriority = 0))
+	TArray<float> PanelAngles = TArray<float>();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	/** Preset data asset for LED product */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	ULedProduct* LedProductDataAsset;
 
+	/** Angular offset between start and origin */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (ClampMin = "-180.0", ClampMax = "180.0", DisplayPriority = 0))
+	float StartingAngle = 0.0f;
+	
+	/** Starting offset from origin */
+	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
+	FVector StartingPos = { 0, 0, 0 };
+
+
+	/** Cumulative angle of all angular offsets */
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (ClampMin = "-180.0", ClampMax = "180.0", DisplayPriority = 0))
+	float CumulativeAngle = 0.0f;
+	
+	/** Position of final point to begin next section */
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
+	FVector EndingPos = { 0, 0, 0 };
+	
 	/** Name of the LED panel */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	FString ModelName = "modelName";
 
 	/** Physical size of the LED panel in cm (X = width, Y = height, Z = depth) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	FVector CabinetSize;
 
 	/** Resolution width (pixels) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	int32 CabinetResolutionX;
 
 	/** Resolution height (pixels) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	int32 CabinetResolutionY;
 
 	/** Pixel Pitch in mm */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	float PixelPitch;
 
 	/** The material used for rendering the LED panel */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LED Panel")
+	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	UMaterialInterface* PanelMaterial;
 	
 private:
 
-	// Internal logic to construct the quad mesh
 	void BuildMesh();
+	virtual void UpdateLedProduct();
+	virtual void ConvertProcToStatic();
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
+	virtual void CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions, float startingAngle, FVector startingPos);	
 };

@@ -16,17 +16,14 @@ static const FName nDisplayMeshToolTabName("nDisplayMeshTool");
 
 void FnDisplayMeshToolModule::StartupModule()
 {
-	// Style and command setup
 	FnDisplayMeshToolStyle::Initialize();
 	FnDisplayMeshToolStyle::ReloadTextures();
 
-	// Property editor access
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
-	// ✅ Create custom section for ProceduralNdisplaySection (class name without 'A')
 	TSharedRef<FPropertySection> Section = PropertyModule.FindOrCreateSection(
 		"ProceduralNdisplaySection",
-		"GM",
+		"nDisplay Mesh Tool",
 		LOCTEXT("nDisplay Mesh Tool", "nDisplay Mesh Tool")
 	);
 
