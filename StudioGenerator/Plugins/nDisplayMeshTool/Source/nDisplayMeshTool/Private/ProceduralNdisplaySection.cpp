@@ -82,11 +82,11 @@ void AProceduralNdisplaySection::GenerateProceduralMesh()
 
 	if (SectionToSnapTo != nullptr)
 	{
-		CreateMesh(PanelAngles, panelsArray, panelsDimensions, SectionToSnapTo->CumulativeAngle - FMath::DegreesToRadians(SectionToSnapTo->PanelAngles.Last()), SectionToSnapTo->EndingPos);
+		CreateMesh(PanelAngles, panelsArray, panelsDimensions, SectionToSnapTo->CumulativeAngle, SectionToSnapTo->EndingPos);
 	}
 	else
 	{		
-		CreateMesh(PanelAngles, panelsArray, panelsDimensions, FMath::DegreesToRadians(StartingAngle), StartingPos);
+		CreateMesh(PanelAngles, panelsArray, panelsDimensions, StartingAngle, StartingPos);
 	}
 	//BuildMesh();
 }
@@ -99,29 +99,24 @@ void AProceduralNdisplaySection::ConvertToStaticMesh()
 
 void AProceduralNdisplaySection::CreateMesh(TArray<float> panelAngles, FVector2D panels, FVector2D panelDimensions, float startingAngle, FVector startingPos)
 {
+    StartingAngle = startingAngle;
+
     TArray<FVector> vertices;
     TArray<int32> triangles;
     TArray<FVector2D> UV0;
 
-    float cumulative_angle = startingAngle;
+    float cumulativeAngleDeg = StartingAngle;
 
     FVector vectorPos = startingPos;
     FVector nextPoint = vectorPos;
-    
+
+    // Generate vertices
     for (int32 i = 0; i <= panels.X; i++)
     {
-        float nextAngleRad;
-
         if (i != 0 && panelAngles.IsValidIndex(i - 1))
         {
-            nextAngleRad = FMath::DegreesToRadians(panelAngles[i - 1]);
+            cumulativeAngleDeg += panelAngles[i - 1];
         }
-        else
-        {
-            nextAngleRad = FMath::DegreesToRadians(0);
-        }
-
-        cumulative_angle = cumulative_angle + nextAngleRad;
 
         for (int32 j = 0; j <= panels.Y; j++)
         {
@@ -130,33 +125,22 @@ void AProceduralNdisplaySection::CreateMesh(TArray<float> panelAngles, FVector2D
 
             vertices.Add(vectorPos);
 
-            // Compute UV coordinates
             float U = static_cast<float>(i) / panels.X;
             float V = static_cast<float>(j) / panels.Y;
 
             UV0.Add(FVector2D(U, 1 - V));
         }
 
-        nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
-        nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(cumulative_angle);
+        float angleRad = FMath::DegreesToRadians(cumulativeAngleDeg);
+
+        nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(angleRad);
+        nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(angleRad);
         nextPoint.Z = vectorPos.Z;
     }
 
+    // Generate triangles
     for (int32 i = 0; i < panels.X; i++)
     {
-        float nextAngleRad;
-
-        if (i != 0 && panelAngles.IsValidIndex(i - 1))
-        {
-            nextAngleRad = FMath::DegreesToRadians(panelAngles[i - 1]);
-        }
-        else
-        {
-            nextAngleRad = FMath::DegreesToRadians(0);
-        }
-
-        cumulative_angle += nextAngleRad;
-
         for (int32 j = 0; j < panels.Y; j++)
         {
             int32 topLeft = i * (panels.Y + 1) + j;
@@ -172,17 +156,12 @@ void AProceduralNdisplaySection::CreateMesh(TArray<float> panelAngles, FVector2D
             triangles.Add(bottomRight);
             triangles.Add(bottomLeft);
         }
-
-        nextPoint.X = vectorPos.X + panelDimensions.X * FMath::Cos(cumulative_angle);
-        nextPoint.Y = vectorPos.Y + panelDimensions.X * FMath::Sin(cumulative_angle);
-        nextPoint.Z = vectorPos.Z;
     }
 
-	CumulativeAngle = cumulative_angle;
-	EndingPos = vectorPos;
-    ProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, {}, UV0, {}, {}, false);
+    CumulativeAngle = cumulativeAngleDeg;
+    EndingPos = vectorPos;
 
-    //ConvertProcToStatic();
+    ProceduralMeshComponent->CreateMeshSection(0, vertices, triangles, {}, UV0, {}, {}, false);
 }
 
 void AProceduralNdisplaySection::ConvertProcToStatic()
@@ -210,7 +189,7 @@ void AProceduralNdisplaySection::ConvertProcToStatic()
     // Create directory if it doesn't exist
     IFileManager::Get().MakeDirectory(*ContentDir, true);
 
-    FString PackageName = TEXT("/Game/nDisplayMeshTool/") + NewNameSuggestion;
+    FString PackageName = TEXT("/Game/GeneratedMeshes/") + NewNameSuggestion;
     UPackage* Package = CreatePackage(*PackageName);
 
     if (!Package)
@@ -272,21 +251,19 @@ void AProceduralNdisplaySection::ConvertProcToStatic()
     SaveArgs.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
     SaveArgs.SaveFlags = SAVE_NoError;
 
-    //bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
+    bool bSaved = UPackage::SavePackage(Package, StaticMesh, *PackageFileName, SaveArgs);
 
-    //if (bSaved)
-    //{
-    //    // Now notify asset registry
-    //    FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-    //    AssetRegistryModule.AssetCreated(StaticMesh);
-    //    UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
-    //}
-
-    //StaticMeshComponent->SetStaticMesh(StaticMesh);
+    if (bSaved)
+    {
+        // Now notify asset registry
+        FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+        AssetRegistryModule.AssetCreated(StaticMesh);
+        UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to save package!"));
+    }
 }
 
 #if WITH_EDITOR
@@ -309,13 +286,25 @@ void AProceduralNdisplaySection::PostEditChangeProperty(FPropertyChangedEvent& P
 		}
 	}
 	
-	if (AutoUpdate)
+	if (PropertyChangedEvent.Property)
 	{
-		if (PropertyChangedEvent.Property)
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AProceduralNdisplaySection::StaticClass(), FoundActors);
+
+		for (AActor* Actor : FoundActors)
 		{
-			GenerateProceduralMesh();
-		}		
-	}
+			AProceduralNdisplaySection* Section = Cast<AProceduralNdisplaySection>(Actor);
+			if (Section)
+			{
+				if (Section->AutoUpdate)
+				{				
+					Section->GenerateProceduralMesh();
+				}
+			}
+		}
+	}	
+
+	
 }
 #endif
 

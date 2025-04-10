@@ -10,6 +10,7 @@
 #include "ProceduralMeshConversion.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/SavePackage.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "ProceduralNdisplaySection.generated.h"
 
@@ -51,10 +52,6 @@ protected:
 	/** Mesh Component that holds the generated procedural geometry */
 	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
 	UProceduralMeshComponent* ProceduralMeshComponent;
-	
-	/** Mesh Component that holds the generated static geometry */
-	UPROPERTY(VisibleAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
-	UStaticMeshComponent* StaticMeshComponent;
 
 	/** Volume/Wall Array Width */
 	UPROPERTY(EditAnywhere, Category = "nDisplay Mesh Tool", meta = (DisplayPriority = 0))
