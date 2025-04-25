@@ -1,15 +1,12 @@
 // Copyright Morgan Skillicorn. All Rights Reserved.
 
 #include "ProceduralNdisplaySection.h"
-
 #include "Components/NativeWidgetHost.h"
 
-// Sets default values
 AProceduralNdisplaySection::AProceduralNdisplaySection()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	// Create and configure the Procedural Mesh Component
+	
 	ProceduralMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 	RootComponent = ProceduralMeshComponent;
 	ProceduralMeshComponent->bUseComplexAsSimpleCollision = true;
@@ -19,60 +16,7 @@ AProceduralNdisplaySection::AProceduralNdisplaySection()
 void AProceduralNdisplaySection::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	// Optionally call GenerateProceduralMesh here if you want auto-regeneration
-	// GenerateProceduralMesh();
 }
-
-/*// Generates a quad grid based on NumX, NumY, and TileSize
-void AProceduralNdisplaySection::BuildMesh()
-{
-	TArray<FVector> Vertices;
-	TArray<int32> Triangles;
-	TArray<FVector> Normals;
-	TArray<FVector2D> UVs;
-	TArray<FLinearColor> VertexColors;
-	TArray<FProcMeshTangent> Tangents;
-
-	const int32 VertexCountX = NumX + 1;
-	const int32 VertexCountY = NumY + 1;
-
-	// Generate vertices
-	for (int32 y = 0; y < VertexCountY; ++y)
-	{
-		for (int32 x = 0; x < VertexCountX; ++x)
-		{
-			Vertices.Add(FVector(x * TileSize, y * TileSize, 0));
-			UVs.Add(FVector2D((float)x / NumX, (float)y / NumY));
-			Normals.Add(FVector(0, 0, 1));
-			VertexColors.Add(FLinearColor::White);
-			Tangents.Add(FProcMeshTangent(1, 0, 0));
-		}
-	}
-
-	// Generate triangles
-	for (int32 y = 0; y < NumY; ++y)
-	{
-		for (int32 x = 0; x < NumX; ++x)
-		{
-			int32 Index = y * VertexCountX + x;
-
-			// First triangle
-			Triangles.Add(Index);
-			Triangles.Add(Index + VertexCountX);
-			Triangles.Add(Index + 1);
-
-			// Second triangle
-			Triangles.Add(Index + 1);
-			Triangles.Add(Index + VertexCountX);
-			Triangles.Add(Index + VertexCountX + 1);
-		}
-	}
-
-	// Create the mesh section
-	MeshComponent->CreateMeshSection_LinearColor(
-		0, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, bCreateCollision
-	);
-}*/
 
 // Callable from editor to generate the procedural mesh
 void AProceduralNdisplaySection::GenerateProceduralMesh()
@@ -88,7 +32,6 @@ void AProceduralNdisplaySection::GenerateProceduralMesh()
 	{		
 		CreateMesh(PanelAngles, panelsArray, panelsDimensions, StartingAngle, StartingPos);
 	}
-	//BuildMesh();
 }
 
 // Callable from editor to generate the static mesh
@@ -224,7 +167,7 @@ void AProceduralNdisplaySection::ConvertProcToStatic()
     StaticMesh->CreateMeshDescription(0, MoveTemp(MeshDescription));
     StaticMesh->CommitMeshDescription(0);
 
-    // Copy materials
+    // Copy materials - currently not implemented due to issue with transient materials
     const int32 NumSections = ProcMeshComp->GetNumSections();
     for (int32 SectionIdx = 0; SectionIdx < NumSections; SectionIdx++)
     {
@@ -255,7 +198,7 @@ void AProceduralNdisplaySection::ConvertProcToStatic()
 
     if (bSaved)
     {
-        // Now notify asset registry
+        // Notify asset registry
         FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
         AssetRegistryModule.AssetCreated(StaticMesh);
         UE_LOG(LogTemp, Log, TEXT("Successfully created and saved static mesh at %s"), *PackageFileName);
@@ -293,8 +236,7 @@ void AProceduralNdisplaySection::PostEditChangeProperty(FPropertyChangedEvent& P
 
 		for (AActor* Actor : FoundActors)
 		{
-			AProceduralNdisplaySection* Section = Cast<AProceduralNdisplaySection>(Actor);
-			if (Section)
+			if (AProceduralNdisplaySection* Section = Cast<AProceduralNdisplaySection>(Actor))
 			{
 				if (Section->AutoUpdate)
 				{				
